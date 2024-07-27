@@ -13,46 +13,41 @@ import Box from '@mui/material/Box';
 const Home = () => {
     
     const[rows,setRows]=useState([])
-    const [likedBooks, setLikedBooks] = useState(new Set());
     useEffect(()=>{
       axios.get('http://localhost:5000/books').then((res)=>{
      
       setRows(res.data)
     })
     },[])
-    const handleLike = (id) => {
-        if (likedBooks.has(id)) {
-            alert('You have already liked this book');
-            return;
-        }
+    // const handleLike = (id) => {
+    //     const updatedRows = rows.map(row => {
+    //         if (row._id === id) {
+    //             return { ...row, likecount: row.likecount + 1 };
+    //         }
+    //         return row;
+    //     });
+    //     setRows(updatedRows);
 
-        const updatedRows = rows.map(row => {
-            if (row._id === id) {
-                return { ...row, likecount: row.likecount + 1 };
-            }
-            return row;
-        });
-        setRows(updatedRows);
-
-        axios.post(`http://localhost:5000/books/${id}/like`)
+    //     axios.post(`http://localhost:5000/books/${id}/like`).then((res) => {
+    //         console.log('Like count updated successfully');
+    //     }).catch((err) => {
+    //         console.error('Error updating like count', err);
+    //     });
+    // };
+    const handleDelete = (id) => {
+        axios.delete(`http://localhost:5000/removebook/${id}`)
             .then((res) => {
-                setLikedBooks(new Set([...likedBooks, id]));
-                alert('you liked a book');
+                setRows(rows.filter(row => row._id !== id));
+                alert('Book deleted successfully');
             })
             .catch((err) => {
-                alert('Error updating like count', err);
+                console.error('Error deleting book', err);
             });
     };
-    const handleRequest = (bookId, bookName) => {
-        axios.post(`http://localhost:5000/books/${bookId}/request`)
-          .then((res) => {
-            alert(`Request received for ${bookName}`);
-          })
-          .catch((err) => {
-            console.error('Error sending request:', err);
-            alert('Error sending request');
-          });
-      };
+
+    // const handleRequest = () => {
+    //     alert('Request sent');
+    // };
 
     return (
     <div>
@@ -97,21 +92,28 @@ const Home = () => {
             <Typography variant="body2" color="text.secondary">
             COMMENTS : {row.comment}
             </Typography>
-            <button
+            {/* <button
                                         color="inherit"
                                         style={{ color: 'blue' }}
                                         onClick={() => handleLike(row._id)}
                                     >
                                         LIKE
-                                    </button>
-                                    <button
-                                      color="inherit"
-                                      style={{ color: 'red' }}
-                                      onClick={() => handleRequest(row._id, row.title)}
+                                    </button> */}
+                                    {/* <button
+                                        color="inherit"
+                                        style={{ color: 'red' }}
+                                        onClick={handleRequest}
                                     >
                                         REQUEST
+                                    </button> */}
+                                    <button
+                                        color="inherit"
+                                        style={{ color: 'orange' }}
+                                        onClick={() => handleDelete(row._id)}
+                                    >
+                                        DELETE
                                     </button>
-            <button color="inherit" style={{color:'green'}}>COMMENT</button>
+            {/* <button color="inherit" style={{color:'green'}}>COMMENT</button> */}
         </CardContent>
         </Card>
 
